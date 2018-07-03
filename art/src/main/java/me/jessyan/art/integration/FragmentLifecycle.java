@@ -1,18 +1,18 @@
-/**
-  * Copyright 2017 JessYan
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+/*
+ * Copyright 2017 JessYan
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package me.jessyan.art.integration;
 
 import android.content.Context;
@@ -22,10 +22,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import me.jessyan.art.base.delegate.FragmentDelegate;
 import me.jessyan.art.base.delegate.FragmentDelegateImpl;
 import me.jessyan.art.base.delegate.IFragment;
 import me.jessyan.art.integration.cache.Cache;
+import me.jessyan.art.integration.cache.IntelligentCache;
 import me.jessyan.art.utils.Preconditions;
 import timber.log.Timber;
 
@@ -39,7 +43,12 @@ import timber.log.Timber;
  * <a href="https://github.com/JessYanCoding">Follow me</a>
  * ================================================
  */
+@Singleton
 public class FragmentLifecycle extends FragmentManager.FragmentLifecycleCallbacks {
+
+    @Inject
+    public FragmentLifecycle() {
+    }
 
     @Override
     public void onFragmentAttached(FragmentManager fm, Fragment f, Context context) {
@@ -49,7 +58,9 @@ public class FragmentLifecycle extends FragmentManager.FragmentLifecycleCallback
             if (fragmentDelegate == null || !fragmentDelegate.isAdded()) {
                 Cache<String, Object> cache = getCacheFromFragment((IFragment) f);
                 fragmentDelegate = new FragmentDelegateImpl(fm, f);
-                cache.put(FragmentDelegate.FRAGMENT_DELEGATE, fragmentDelegate);
+                //使用 IntelligentCache.KEY_KEEP 作为 key 的前缀, 可以使储存的数据永久存储在内存中
+                //否则存储在 LRU 算法的存储空间中, 前提是 Fragment 使用的是 IntelligentCache (框架默认使用)
+                cache.put(IntelligentCache.KEY_KEEP + FragmentDelegate.FRAGMENT_DELEGATE, fragmentDelegate);
             }
             fragmentDelegate.onAttach(context);
         }
@@ -157,7 +168,7 @@ public class FragmentLifecycle extends FragmentManager.FragmentLifecycleCallback
     private FragmentDelegate fetchFragmentDelegate(Fragment fragment) {
         if (fragment instanceof IFragment) {
             Cache<String, Object> cache = getCacheFromFragment((IFragment) fragment);
-            return (FragmentDelegate) cache.get(FragmentDelegate.FRAGMENT_DELEGATE);
+            return (FragmentDelegate) cache.get(IntelligentCache.KEY_KEEP + FragmentDelegate.FRAGMENT_DELEGATE);
         }
         return null;
     }

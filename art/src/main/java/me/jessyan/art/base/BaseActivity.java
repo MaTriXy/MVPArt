@@ -1,18 +1,18 @@
-/**
-  * Copyright 2017 JessYan
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+/*
+ * Copyright 2017 JessYan
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package me.jessyan.art.base;
 
 import android.app.Activity;
@@ -70,7 +70,8 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         super.onCreate(savedInstanceState);
         try {
             int layoutResID = initView(savedInstanceState);
-            if (layoutResID != 0) {//如果initView返回0,框架则不会调用setContentView(),当然也不会 Bind ButterKnife
+            //如果 initView 返回 0, 框架则不会调用 setContentView(), 当然也不会 Bind ButterKnife
+            if (layoutResID != 0) {
                 setContentView(layoutResID);
                 //绑定到butterknife
                 mUnbinder = ButterKnife.bind(this);
@@ -82,7 +83,7 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
     @Override
-    public void setPresenter(P presenter) {
+    public void setPresenter(@Nullable P presenter) {
         this.mPresenter = presenter;
     }
 

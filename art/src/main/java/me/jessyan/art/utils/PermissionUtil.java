@@ -1,18 +1,18 @@
-/**
-  * Copyright 2017 JessYan
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+/*
+ * Copyright 2017 JessYan
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package me.jessyan.art.utils;
 
 import android.Manifest;
@@ -21,7 +21,6 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.annotations.NonNull;
@@ -87,21 +86,31 @@ public class PermissionUtil {
                     .subscribe(new ErrorHandleSubscriber<List<Permission>>(errorHandler) {
                         @Override
                         public void onNext(@NonNull List<Permission> permissions) {
+                            List<String> failurePermissions = new ArrayList<>();
+                            List<String> askNeverAgainPermissions = new ArrayList<>();
                             for (Permission p : permissions) {
                                 if (!p.granted) {
                                     if (p.shouldShowRequestPermissionRationale) {
-                                        Timber.tag(TAG).d("Request permissions failure");
-                                        requestPermission.onRequestPermissionFailure(Arrays.asList(p.name));
-                                        return;
+                                        failurePermissions.add(p.name);
                                     } else {
-                                        Timber.tag(TAG).d("Request permissions failure with ask never again");
-                                        requestPermission.onRequestPermissionFailureWithAskNeverAgain(Arrays.asList(p.name));
-                                        return;
+                                        askNeverAgainPermissions.add(p.name);
                                     }
                                 }
                             }
-                            Timber.tag(TAG).d("Request permissions success");
-                            requestPermission.onRequestPermissionSuccess();
+                            if (failurePermissions.size() > 0) {
+                                Timber.tag(TAG).d("Request permissions failure");
+                                requestPermission.onRequestPermissionFailure(failurePermissions);
+                            }
+
+                            if (askNeverAgainPermissions.size() > 0){
+                                Timber.tag(TAG).d("Request permissions failure with ask never again");
+                                requestPermission.onRequestPermissionFailureWithAskNeverAgain(askNeverAgainPermissions);
+                            }
+
+                            if (failurePermissions.size() == 0 && askNeverAgainPermissions.size() == 0){
+                                Timber.tag(TAG).d("Request permissions success");
+                                requestPermission.onRequestPermissionSuccess();
+                            }
                         }
                     });
         }

@@ -1,24 +1,28 @@
 <h1 align="center">MVPArt</h1>
 
 <p align="center">
-   <a href="https://bintray.com/jessyancoding/maven/MVPArt/2.3.1/link">
-    <img src="https://img.shields.io/badge/bintray-v2.3.1-brightgreen.svg" alt="Latest Stable Version" />
+   <a href="https://bintray.com/jessyancoding/maven/MVPArt/2.4.1/link">
+    <img src="https://img.shields.io/badge/Jcenter-v2.4.1-brightgreen.svg?style=flat-square" alt="Latest Stable Version" />
   </a>
   <a href="https://travis-ci.org/JessYanCoding/MVPArt">
     <img src="https://travis-ci.org/JessYanCoding/MVPArt.svg?branch=complete" alt="Build Status" />
   </a>
-  <a href="https://developer.android.com/about/versions/android-4.0.3.html">
-    <img src="https://img.shields.io/badge/API-15%2B-blue.svg?style=flat-square" alt="Min Sdk Version" />
+  <a href="https://developer.android.com/about/versions/android-4.0.html">
+    <img src="https://img.shields.io/badge/API-14%2B-blue.svg?style=flat-square" alt="Min Sdk Version" />
   </a>
   <a href="http://www.apache.org/licenses/LICENSE-2.0">
     <img src="http://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square" alt="License" />
   </a>
+  <a href="https://www.jianshu.com/u/1d0c0bc634db">
+    <img src="https://img.shields.io/badge/Author-JessYan-orange.svg?style=flat-square" alt="Author" />
+  </a>
   <a href="https://shang.qq.com/wpa/qunwpa?idkey=1a5dc5e9b2e40a780522f46877ba243eeb64405d42398643d544d3eec6624917">
-    <img src="https://img.shields.io/badge/QQ群-301733278-ff69b4.svg" alt="QQ Group" />
+    <img src="https://img.shields.io/badge/QQ群-301733278-orange.svg?style=flat-square" alt="QQ Group" />
   </a>
 </p>
 
-## A New Android MVP Architecture
+<h2 align="center">A New Android MVP Architecture</h2>  
+
 **此框架旨在解决传统 **MVP** 类和接口太多,并且 **Presenter** 和 **View** 通过接口通信过于繁琐,重用 **Presenter** 代价太大等问题**
 
 
@@ -32,6 +36,10 @@
 > [**Complete** 分支](https://github.com/JessYanCoding/MVPArt/tree/complete)
 >> **Complete** 分支是一个含有网络层的完整框架,将 **Retrofit** 作为网络层并使用 **Dagger2** 管理所有对象,成熟强大适合新建的项目
 
+## Wiki
+[详细使用方法及扩展功能,请参照 Wiki 文档](https://github.com/JessYanCoding/MVPArms/wiki)
+> Tips: **MVPArt** 和 **MVPArms** 的主要区别在于 **MVP** 中的 **V** 和 **P** 的交互方式 (**Master** 分支中详细描述), 其他核心功能基本一致, 所以文档中大部分内容两者都可以共用
+
 ## Notice
 * 使用之前,请参阅 [传统MVP用在项目中是真的方便还是累赘?](https://gold.xitu.io/post/58b25e588d6d810057ed3659)
 
@@ -43,9 +51,9 @@
 
 ## Download
 ``` gradle
- compile 'me.jessyan:art:2.3.1'  //rxjava2
+ implementation 'me.jessyan:art:2.4.1'  //rxjava2
 
- compile 'me.jessyan:art:1.4.3' //rxjava1(不再维护)
+ implementation 'me.jessyan:art:1.4.3' //rxjava1(不再维护)
 ```
 
 ## Donate

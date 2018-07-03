@@ -1,12 +1,12 @@
-/**
+/*
  * Copyright 2017 JessYan
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,13 +32,17 @@ import dagger.Module;
 import dagger.Provides;
 import me.jessyan.art.http.BaseUrl;
 import me.jessyan.art.http.GlobalHttpHandler;
-import me.jessyan.art.http.RequestInterceptor;
 import me.jessyan.art.http.imageloader.BaseImageLoaderStrategy;
 import me.jessyan.art.http.imageloader.glide.GlideImageLoaderStrategy;
+import me.jessyan.art.http.log.DefaultFormatPrinter;
+import me.jessyan.art.http.log.FormatPrinter;
+import me.jessyan.art.http.log.RequestInterceptor;
 import me.jessyan.art.integration.cache.Cache;
 import me.jessyan.art.integration.cache.CacheType;
+import me.jessyan.art.integration.cache.IntelligentCache;
 import me.jessyan.art.integration.cache.LruCache;
 import me.jessyan.art.utils.DataHelper;
+import me.jessyan.art.utils.Preconditions;
 import me.jessyan.rxerrorhandler.handler.listener.ResponseErrorListener;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -67,6 +71,7 @@ public class GlobalConfigModule {
     private ClientModule.RxCacheConfiguration mRxCacheConfiguration;
     private AppModule.GsonConfiguration mGsonConfiguration;
     private RequestInterceptor.Level mPrintHttpLogLevel;
+    private FormatPrinter mFormatPrinter;
     private Cache.Factory mCacheFactory;
 
     private GlobalConfigModule(Builder builder) {
@@ -82,6 +87,7 @@ public class GlobalConfigModule {
         this.mRxCacheConfiguration = builder.rxCacheConfiguration;
         this.mGsonConfiguration = builder.gsonConfiguration;
         this.mPrintHttpLogLevel = builder.printHttpLogLevel;
+        this.mFormatPrinter = builder.formatPrinter;
         this.mCacheFactory = builder.cacheFactory;
     }
 
@@ -192,9 +198,14 @@ public class GlobalConfigModule {
 
     @Singleton
     @Provides
-    @Nullable
     RequestInterceptor.Level providePrintHttpLogLevel() {
-        return mPrintHttpLogLevel;
+        return mPrintHttpLogLevel == null ? RequestInterceptor.Level.ALL : mPrintHttpLogLevel;
+    }
+
+    @Singleton
+    @Provides
+    FormatPrinter provideFormatPrinter(){
+        return mFormatPrinter == null ? new DefaultFormatPrinter() : mFormatPrinter;
     }
 
     @Singleton
@@ -204,9 +215,18 @@ public class GlobalConfigModule {
             @NonNull
             @Override
             public Cache build(CacheType type) {
-                //若想自定义 LruCache 的 size,或者不想使用 LruCache ,想使用自己自定义的策略
-                //请使用 GlobalConfigModule.Builder#cacheFactory() 扩展
-                return new LruCache(type.calculateCacheSize(application));
+                //若想自定义 LruCache 的 size, 或者不想使用 LruCache, 想使用自己自定义的策略
+                //使用 GlobalConfigModule.Builder#cacheFactory() 即可扩展
+                switch (type.getCacheTypeId()){
+                    //Activity、Fragment 以及 Extras 使用 IntelligentCache (具有 LruCache 和 可永久存储数据的 Map)
+                    case CacheType.EXTRAS_TYPE_ID:
+                    case CacheType.ACTIVITY_CACHE_TYPE_ID:
+                    case CacheType.FRAGMENT_CACHE_TYPE_ID:
+                        return new IntelligentCache(type.calculateCacheSize(application));
+                    //其余使用 LruCache (当达到最大容量时可根据 LRU 算法抛弃不合规数据)
+                    default:
+                        return new LruCache(type.calculateCacheSize(application));
+                }
             }
         } : mCacheFactory;
     }
@@ -225,6 +245,7 @@ public class GlobalConfigModule {
         private ClientModule.RxCacheConfiguration rxCacheConfiguration;
         private AppModule.GsonConfiguration gsonConfiguration;
         private RequestInterceptor.Level printHttpLogLevel;
+        private FormatPrinter formatPrinter;
         private Cache.Factory cacheFactory;
 
         private Builder() {
@@ -239,10 +260,7 @@ public class GlobalConfigModule {
         }
 
         public Builder baseurl(BaseUrl baseUrl) {
-            if (baseUrl == null) {
-                throw new NullPointerException("BaseUrl can not be null");
-            }
-            this.baseUrl = baseUrl;
+            this.baseUrl = Preconditions.checkNotNull(baseUrl, BaseUrl.class.getCanonicalName() + "can not be null.");
             return this;
         }
 
@@ -297,9 +315,12 @@ public class GlobalConfigModule {
         }
 
         public Builder printHttpLogLevel(RequestInterceptor.Level printHttpLogLevel) { //是否让框架打印 Http 的请求和响应信息
-            if (printHttpLogLevel == null)
-                throw new NullPointerException("printHttpLogLevel == null. Use RequestInterceptor.Level.NONE instead.");
-            this.printHttpLogLevel = printHttpLogLevel;
+            this.printHttpLogLevel = Preconditions.checkNotNull(printHttpLogLevel, "The printHttpLogLevel can not be null, use RequestInterceptor.Level.NONE instead.");
+            return this;
+        }
+
+        public Builder formatPrinter(FormatPrinter formatPrinter){
+            this.formatPrinter = Preconditions.checkNotNull(formatPrinter, FormatPrinter.class.getCanonicalName() + "can not be null.");
             return this;
         }
 
@@ -311,9 +332,5 @@ public class GlobalConfigModule {
         public GlobalConfigModule build() {
             return new GlobalConfigModule(this);
         }
-
-
     }
-
-
 }
