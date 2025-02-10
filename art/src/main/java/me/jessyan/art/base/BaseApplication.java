@@ -27,8 +27,11 @@ import me.jessyan.art.utils.Preconditions;
 
 /**
  * ================================================
- * 本框架由 MVP + Dagger2 + Retrofit + RxJava + Androideventbus + Butterknife 组成
- * <p>
+ * MVPArt 是一个新的 MVP 架构, 适合中小型项目, 旨在解决传统 MVP 类和接口太多, 并且 Presenter 和 View
+ * 通过接口通信过于繁琐, 重用 Presenter 代价太大等问题
+ *
+ * @see <a href="https://github.com/JessYanCoding/MVPArms/wiki">请配合官方 Wiki 文档学习本框架 (Arms 的文档除了 MVP 部分, 其他的文档内容 Art 和 Arms 都可以共用)</a>
+ * @see <a href="https://github.com/JessYanCoding/MVPArms/wiki/Issues">常见 Issues, 踩坑必看!</a>
  * Created by JessYan on 22/03/2016
  * <a href="mailto:jess.yan.effort@gmail.com">Contact me</a>
  * <a href="https://github.com/JessYanCoding">Follow me</a>
@@ -68,7 +71,6 @@ public class BaseApplication extends Application implements App {
             this.mAppDelegate.onTerminate(this);
     }
 
-
     /**
      *将 {@link AppComponent} 返回出去, 供其它地方使用, {@link AppComponent} 接口中声明的方法所返回的实例, 在 {@link #getAppComponent()} 拿到对象后都可以直接使用
      *
@@ -79,8 +81,7 @@ public class BaseApplication extends Application implements App {
     @Override
     public AppComponent getAppComponent() {
         Preconditions.checkNotNull(mAppDelegate, "%s cannot be null", AppDelegate.class.getName());
-        Preconditions.checkState(mAppDelegate instanceof App, "%s must be implements %s", AppDelegate.class.getName(), App.class.getName());
+        Preconditions.checkState(mAppDelegate instanceof App, "%s must be implements %s", mAppDelegate.getClass().getName(), App.class.getName());
         return ((App) mAppDelegate).getAppComponent();
     }
-
 }

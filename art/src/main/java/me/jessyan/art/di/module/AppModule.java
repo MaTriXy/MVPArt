@@ -17,6 +17,7 @@ package me.jessyan.art.di.module;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 
@@ -31,7 +32,9 @@ import javax.inject.Singleton;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import me.jessyan.art.di.component.AppComponent;
 import me.jessyan.art.integration.ActivityLifecycle;
+import me.jessyan.art.integration.AppManager;
 import me.jessyan.art.integration.FragmentLifecycle;
 import me.jessyan.art.integration.cache.Cache;
 import me.jessyan.art.integration.cache.CacheType;
@@ -58,6 +61,20 @@ public abstract class AppModule {
         return builder.create();
     }
 
+    /**
+     * 之前 {@link AppManager} 使用 Dagger 保证单例, 只能使用 {@link AppComponent#appManager()} 访问
+     * 现在直接将 AppManager 独立为单例类, 可以直接通过静态方法 {@link AppManager#getAppManager()} 访问, 更加方便
+     * 但为了不影响之前使用 {@link AppComponent#appManager()} 获取 {@link AppManager} 的项目, 所以暂时保留这种访问方式
+     *
+     * @param application {@link Application}
+     * @return {@link AppManager}
+     */
+    @Singleton
+    @Provides
+    static AppManager provideAppManager(Application application) {
+        return AppManager.getAppManager().init(application);
+    }
+
     @Binds
     abstract IRepositoryManager bindRepositoryManager(RepositoryManager repositoryManager);
 
@@ -75,12 +92,11 @@ public abstract class AppModule {
 
     @Singleton
     @Provides
-    static List<FragmentManager.FragmentLifecycleCallbacks> provideFragmentLifecycles(){
+    static List<FragmentManager.FragmentLifecycleCallbacks> provideFragmentLifecycles() {
         return new ArrayList<>();
     }
 
     public interface GsonConfiguration {
-        void configGson(Context context, GsonBuilder builder);
+        void configGson(@NonNull Context context, @NonNull GsonBuilder builder);
     }
-
 }

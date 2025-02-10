@@ -22,8 +22,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.simple.eventbus.EventBus;
-
+import me.jessyan.art.integration.EventBusManager;
 import me.jessyan.art.mvp.IPresenter;
 
 /**
@@ -40,7 +39,6 @@ public class ActivityDelegateImpl implements ActivityDelegate {
     private IActivity iActivity;
     private IPresenter iPresenter;
 
-
     public ActivityDelegateImpl(@NonNull Activity activity) {
         this.mActivity = activity;
         this.iActivity = (IActivity) activity;
@@ -51,7 +49,7 @@ public class ActivityDelegateImpl implements ActivityDelegate {
         //如果要使用 EventBus 请将此方法返回 true
         if (iActivity.useEventBus()) {
             //注册到事件主线
-            EventBus.getDefault().register(mActivity);
+            EventBusManager.getInstance().register(mActivity);
         }
         this.iPresenter = iActivity.obtainPresenter();
         iActivity.setPresenter(iPresenter);
@@ -91,7 +89,7 @@ public class ActivityDelegateImpl implements ActivityDelegate {
     public void onDestroy() {
         //如果要使用 EventBus 请将此方法返回 true
         if (iActivity != null && iActivity.useEventBus())
-            EventBus.getDefault().unregister(mActivity);
+            EventBusManager.getInstance().unregister(mActivity);
         //释放资源
         if (iPresenter != null) iPresenter.onDestroy();
         this.iActivity = null;

@@ -1,8 +1,8 @@
 <h1 align="center">MVPArt</h1>
 
 <p align="center">
-   <a href="https://bintray.com/jessyancoding/maven/MVPArt/2.4.1/link">
-    <img src="https://img.shields.io/badge/Jcenter-v2.4.1-brightgreen.svg?style=flat-square" alt="Latest Stable Version" />
+   <a href="https://bintray.com/jessyancoding/maven/MVPArt/_latestVersion">
+    <img src="https://img.shields.io/badge/Jcenter-v2.5.0-brightgreen.svg?style=flat-square" alt="Latest Stable Version" />
   </a>
   <a href="https://travis-ci.org/JessYanCoding/MVPArt">
     <img src="https://travis-ci.org/JessYanCoding/MVPArt.svg?branch=complete" alt="Build Status" />
@@ -16,14 +16,14 @@
   <a href="https://www.jianshu.com/u/1d0c0bc634db">
     <img src="https://img.shields.io/badge/Author-JessYan-orange.svg?style=flat-square" alt="Author" />
   </a>
-  <a href="https://shang.qq.com/wpa/qunwpa?idkey=1a5dc5e9b2e40a780522f46877ba243eeb64405d42398643d544d3eec6624917">
-    <img src="https://img.shields.io/badge/QQ群-301733278-orange.svg?style=flat-square" alt="QQ Group" />
+  <a href="https://shang.qq.com/wpa/qunwpa?idkey=7e59e59145e6c7c68932ace10f52790636451f01d1ecadb6a652b1df234df753">
+    <img src="https://img.shields.io/badge/QQ%E7%BE%A4-455850365%20%7C%20301733278-orange.svg?style=flat-square" alt="QQ Group" />
   </a>
 </p>
 
 <h2 align="center">A New Android MVP Architecture</h2>  
 
-**此框架旨在解决传统 **MVP** 类和接口太多,并且 **Presenter** 和 **View** 通过接口通信过于繁琐,重用 **Presenter** 代价太大等问题**
+**此框架旨在解决传统 **MVP** 类和接口太多, 并且 **Presenter** 和 **View** 通过接口通信过于繁琐, 重用 **Presenter** 代价太大等问题**
 
 
 ## Architectural
@@ -41,7 +41,7 @@
 > Tips: **MVPArt** 和 **MVPArms** 的主要区别在于 **MVP** 中的 **V** 和 **P** 的交互方式 (**Master** 分支中详细描述), 其他核心功能基本一致, 所以文档中大部分内容两者都可以共用
 
 ## Notice
-* 使用之前,请参阅 [传统MVP用在项目中是真的方便还是累赘?](https://gold.xitu.io/post/58b25e588d6d810057ed3659)
+* 使用之前,请参阅 [传统MVP用在项目中是真的方便还是累赘?](https://www.jianshu.com/p/ac51c9b88af3)
 
 * [使用 Template 自动生成 MVP 相关类](https://github.com/JessYanCoding/MVPArmsTemplate)
 * 此框架是一个轻量级框架,比较适合中小型项目,大型项目请使用 [MVPArms](https://github.com/JessYanCoding/MVPArms)
@@ -51,19 +51,22 @@
 
 ## Download
 ``` gradle
- implementation 'me.jessyan:art:2.4.1'  //rxjava2
+ implementation 'me.jessyan:art:2.5.0'
 
- implementation 'me.jessyan:art:1.4.3' //rxjava1(不再维护)
+ ---------------------- 以下是扩展库 ----------------------
+ 
+ //想使用 Glide 请依赖 art-imageloader-glide 扩展库
+ implementation 'me.jessyan:art-imageloader-glide:2.5.0' 
+ 
+ //想使用 AndroidAutoLayout 请依赖 art-autolayout 扩展库
+ implementation 'me.jessyan:art-autolayout:2.5.0'
 ```
-
-## Donate
-![alipay](https://raw.githubusercontent.com/JessYanCoding/MVPArms/master/image/pay_alipay.jpg) ![](https://raw.githubusercontent.com/JessYanCoding/MVPArms/master/image/pay_wxpay.jpg)
 
 ## About Me
 * **Email**: <jess.yan.effort@gmail.com>  
 * **Home**: <http://jessyan.me>
-* **掘金**: <https://gold.xitu.io/user/57a9dbd9165abd0061714613>
-* **简书**: <http://www.jianshu.com/u/1d0c0bc634db>
+* **掘金**: <https://juejin.im/user/57a9dbd9165abd0061714613>
+* **简书**: <https://www.jianshu.com/u/1d0c0bc634db>
 
 ## License
 ```

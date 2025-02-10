@@ -15,15 +15,17 @@
  */
 package me.jessyan.art.http.log;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.List;
 
 import me.jessyan.art.di.module.GlobalConfigModule;
 import me.jessyan.art.utils.CharacterHandler;
+import me.jessyan.art.utils.LogUtils;
 import okhttp3.MediaType;
 import okhttp3.Request;
-import timber.log.Timber;
 
 /**
  * ================================================
@@ -36,7 +38,6 @@ import timber.log.Timber;
  * <a href="https://github.com/JessYanCoding">Follow me</a>
  * ================================================
  */
-
 public class DefaultFormatPrinter implements FormatPrinter {
     private static final String TAG = "ArtHttpLog";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -61,7 +62,6 @@ public class DefaultFormatPrinter implements FormatPrinter {
     private static final String CENTER_LINE = "├ ";
     private static final String DEFAULT_LINE = "│ ";
 
-
     private static boolean isEmpty(String line) {
         return TextUtils.isEmpty(line) || N.equals(line) || T.equals(line) || TextUtils.isEmpty(line.trim());
     }
@@ -73,15 +73,15 @@ public class DefaultFormatPrinter implements FormatPrinter {
      * @param bodyString
      */
     @Override
-    public void printJsonRequest(Request request, String bodyString) {
+    public void printJsonRequest(@NonNull Request request, @NonNull String bodyString) {
         final String requestBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + bodyString;
         final String tag = getTag(true);
 
-        Timber.tag(tag).i(REQUEST_UP_LINE);
+        LogUtils.debugInfo(tag, REQUEST_UP_LINE);
         logLines(tag, new String[]{URL_TAG + request.url()}, false);
         logLines(tag, getRequest(request), true);
         logLines(tag, requestBody.split(LINE_SEPARATOR), true);
-        Timber.tag(tag).i(END_LINE);
+        LogUtils.debugInfo(tag, END_LINE);
     }
 
     /**
@@ -90,14 +90,14 @@ public class DefaultFormatPrinter implements FormatPrinter {
      * @param request
      */
     @Override
-    public void printFileRequest(Request request) {
+    public void printFileRequest(@NonNull Request request) {
         final String tag = getTag(true);
 
-        Timber.tag(tag).i(REQUEST_UP_LINE);
+        LogUtils.debugInfo(tag, REQUEST_UP_LINE);
         logLines(tag, new String[]{URL_TAG + request.url()}, false);
         logLines(tag, getRequest(request), true);
         logLines(tag, OMITTED_REQUEST, true);
-        Timber.tag(tag).i(END_LINE);
+        LogUtils.debugInfo(tag, END_LINE);
     }
 
     /**
@@ -114,8 +114,8 @@ public class DefaultFormatPrinter implements FormatPrinter {
      * @param responseUrl  请求地址
      */
     @Override
-    public void printJsonResponse(long chainMs, boolean isSuccessful, int code, String headers, MediaType contentType,
-                                  String bodyString, List<String> segments, String message, final String responseUrl) {
+    public void printJsonResponse(long chainMs, boolean isSuccessful, int code, @NonNull String headers, @Nullable MediaType contentType,
+                                  @Nullable String bodyString, @NonNull List<String> segments, @NonNull String message, @NonNull final String responseUrl) {
         bodyString = RequestInterceptor.isJson(contentType) ? CharacterHandler.jsonFormat(bodyString)
                 : RequestInterceptor.isXml(contentType) ? CharacterHandler.xmlFormat(bodyString) : bodyString;
 
@@ -123,11 +123,11 @@ public class DefaultFormatPrinter implements FormatPrinter {
         final String tag = getTag(false);
         final String[] urlLine = {URL_TAG + responseUrl, N};
 
-        Timber.tag(tag).i(RESPONSE_UP_LINE);
+        LogUtils.debugInfo(tag, RESPONSE_UP_LINE);
         logLines(tag, urlLine, true);
         logLines(tag, getResponse(headers, chainMs, code, isSuccessful, segments, message), true);
         logLines(tag, responseBody.split(LINE_SEPARATOR), true);
-        Timber.tag(tag).i(END_LINE);
+        LogUtils.debugInfo(tag, END_LINE);
     }
 
     /**
@@ -142,18 +142,17 @@ public class DefaultFormatPrinter implements FormatPrinter {
      * @param responseUrl  请求地址
      */
     @Override
-    public void printFileResponse(long chainMs, boolean isSuccessful, int code, String headers,
-                                  List<String> segments, String message, final String responseUrl) {
+    public void printFileResponse(long chainMs, boolean isSuccessful, int code, @NonNull String headers,
+                                  @NonNull List<String> segments, @NonNull String message, @NonNull final String responseUrl) {
         final String tag = getTag(false);
         final String[] urlLine = {URL_TAG + responseUrl, N};
 
-        Timber.tag(tag).i(RESPONSE_UP_LINE);
+        LogUtils.debugInfo(tag, RESPONSE_UP_LINE);
         logLines(tag, urlLine, true);
         logLines(tag, getResponse(headers, chainMs, code, isSuccessful, segments, message), true);
         logLines(tag, OMITTED_RESPONSE, true);
-        Timber.tag(tag).i(END_LINE);
+        LogUtils.debugInfo(tag, END_LINE);
     }
-
 
     /**
      * 对 {@code lines} 中的信息进行逐行打印
@@ -170,7 +169,7 @@ public class DefaultFormatPrinter implements FormatPrinter {
                 int start = i * MAX_LONG_SIZE;
                 int end = (i + 1) * MAX_LONG_SIZE;
                 end = end > line.length() ? line.length() : end;
-                Timber.tag(resolveTag(tag)).i(DEFAULT_LINE + line.substring(start, end));
+                LogUtils.debugInfo(resolveTag(tag), DEFAULT_LINE + line.substring(start, end));
             }
         }
     }
@@ -208,7 +207,6 @@ public class DefaultFormatPrinter implements FormatPrinter {
     private static String resolveTag(String tag) {
         return computeKey() + tag;
     }
-
 
     private static String[] getRequest(Request request) {
         String log;
@@ -266,7 +264,6 @@ public class DefaultFormatPrinter implements FormatPrinter {
         return builder.toString();
     }
 
-
     private static String getTag(boolean isRequest) {
         if (isRequest) {
             return TAG + "-Request";
@@ -274,5 +271,4 @@ public class DefaultFormatPrinter implements FormatPrinter {
             return TAG + "-Response";
         }
     }
-
 }
